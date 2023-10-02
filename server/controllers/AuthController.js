@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt';
 export const signup = async (req, res, next) => {
 	try {
 		const { userName, email, password } = req.body;
+		console.log(req.body);
 		const hashedPassword = bcrypt.hashSync(password, 10);
 		const newUser = new userModel({
 			userName,
