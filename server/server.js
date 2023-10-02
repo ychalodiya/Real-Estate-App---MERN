@@ -2,14 +2,16 @@ import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import userRouter from './routes/UserRoute.js';
 dotenv.config();
 
 const app = express();
+const PORT = process.env.PORT || 8080;
 
 app.use(cors());
 app.use(express.json());
 
-const PORT = process.env.PORT || 8080;
+app.use('/api/user', userRouter);
 
 mongoose
 	.connect(process.env.MONGODB_URI)
