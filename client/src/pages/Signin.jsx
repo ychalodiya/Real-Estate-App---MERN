@@ -15,7 +15,7 @@ export default function Signin() {
 
 	const [, setCookies] = useCookies('access_token');
 	const [formData, setFormData] = useState({});
-	const { isLoading, error } = useSelector((state) => state.user);
+	const { error, isLoading } = useSelector((state) => state.user);
 
 	const changeHandler = (e) => {
 		setFormData({ ...formData, [e.target.id]: e.target.value });
@@ -30,7 +30,6 @@ export default function Signin() {
 				formData
 			);
 			setCookies('access_token', data.token);
-			localStorage.setItem('userId', data.id);
 			dispatch(signInSuccess(data.userInfo));
 			navigate('/');
 		} catch (error) {

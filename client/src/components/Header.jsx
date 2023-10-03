@@ -9,7 +9,6 @@ export default function Header() {
 
 	const clickHandler = () => {
 		setCookies('access_token', '');
-		localStorage.removeItem('userId');
 		navigate('/signin');
 	};
 
