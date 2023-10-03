@@ -1,13 +1,14 @@
 import React from 'react';
 import { useCookies } from 'react-cookie';
 import { FaSearch } from 'react-icons/fa';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { signOut } from '../redux/user/userSlice';
 
 export default function Header() {
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
+	const { currentUser } = useSelector((state) => state.user);
 	const [cookies, setCookies] = useCookies(['access_token']);
 
 	const clickHandler = () => {
@@ -38,13 +39,18 @@ export default function Header() {
 					<li className="hidden sm:inline text-slate-700 hover:underline">
 						<Link to="/about">About</Link>
 					</li>
-					<li className="text-slate-700 hover:underline">
-						{cookies.access_token ? (
-							<a onClick={clickHandler}>Sign Out</a>
+
+					<Link to="/profile">
+						{currentUser ? (
+							<img
+								className="rounded-full w-10 object-cover"
+								src={currentUser.avatar}
+								alt={currentUser.userName}
+							/>
 						) : (
-							<Link to="/signin">Sign in</Link>
+							<li className="text-slate-700 hover:underline">Sign in</li>
 						)}
-					</li>
+					</Link>
 				</ul>
 			</div>
 		</header>

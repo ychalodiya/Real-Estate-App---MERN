@@ -9,7 +9,7 @@ export default function Signup() {
 	const [error, setError] = useState(null);
 	const [isLoading, setIsLoading] = useState(false);
 
-	const chnageHandler = (e) => {
+	const changeHandler = (e) => {
 		setFormData({ ...formData, [e.target.id]: e.target.value });
 	};
 
@@ -39,21 +39,21 @@ export default function Signup() {
 					placeholder="username"
 					className="border p-3 rounded-lg"
 					id="userName"
-					onChange={chnageHandler}
+					onChange={changeHandler}
 				/>
 				<input
 					type="text"
 					placeholder="email"
 					className="border p-3 rounded-lg"
 					id="email"
-					onChange={chnageHandler}
+					onChange={changeHandler}
 				/>
 				<input
 					type="password"
 					placeholder="password"
 					className="border p-3 rounded-lg"
 					id="password"
-					onChange={chnageHandler}
+					onChange={changeHandler}
 				/>
 				<button
 					disabled={isLoading}
