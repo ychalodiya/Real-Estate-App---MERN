@@ -39,7 +39,7 @@ export const signin = async (req, res, next) => {
 			process.env.JWT_SECRET
 		);
 
-		res.status(200).json({ token, id: userInfo._id });
+		res.status(200).json({ token, id: userInfo._id, userInfo });
 	} catch (err) {
 		next(err);
 	}

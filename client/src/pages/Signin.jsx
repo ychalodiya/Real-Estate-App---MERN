@@ -2,13 +2,20 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCookies } from 'react-cookie';
+import { useSelector, useDispatch } from 'react-redux';
+import {
+	signInStart,
+	signInSuccess,
+	signInFailure,
+} from '../redux/user/userSlice.js';
 
 export default function Signin() {
 	const navigate = useNavigate();
+	const dispatch = useDispatch();
+
 	const [, setCookies] = useCookies('access_token');
 	const [formData, setFormData] = useState({});
-	const [error, setError] = useState(null);
-	const [isLoading, setIsLoading] = useState(false);
+	const { isLoading, error } = useSelector((state) => state.user);
 
 	const changeHandler = (e) => {
 		setFormData({ ...formData, [e.target.id]: e.target.value });
@@ -17,19 +24,17 @@ export default function Signin() {
 	const submitHandler = async (e) => {
 		try {
 			e.preventDefault();
-			setIsLoading(true);
+			dispatch(signInStart());
 			const { data } = await axios.post(
 				'http://localhost:4000/api/auth/signin',
 				formData
 			);
 			setCookies('access_token', data.token);
 			localStorage.setItem('userId', data.id);
-			setIsLoading(false);
-			setError(null);
+			dispatch(signInSuccess(data.userInfo));
 			navigate('/');
 		} catch (error) {
-			setIsLoading(false);
-			setError(error.response.data.message || error.message);
+			dispatch(signInFailure(error.response.data.message || error.message));
 		}
 	};
 
