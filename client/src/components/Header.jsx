@@ -1,14 +1,18 @@
 import React from 'react';
 import { useCookies } from 'react-cookie';
 import { FaSearch } from 'react-icons/fa';
+import { useDispatch } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
+import { signOut } from '../redux/user/userSlice';
 
 export default function Header() {
 	const navigate = useNavigate();
+	const dispatch = useDispatch();
 	const [cookies, setCookies] = useCookies(['access_token']);
 
 	const clickHandler = () => {
 		setCookies('access_token', '');
+		dispatch(signOut());
 		navigate('/signin');
 	};
 

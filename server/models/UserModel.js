@@ -16,6 +16,11 @@ const userSchema = new mongoose.Schema(
 			type: String,
 			required: true,
 		},
+		avatar: {
+			type: String,
+			default:
+				'https://www.testhouse.net/wp-content/uploads/2021/11/default-avatar.jpg',
+		},
 	},
 	{ timestamps: true }
 );
