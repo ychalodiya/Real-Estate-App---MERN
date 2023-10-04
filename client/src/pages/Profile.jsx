@@ -1,16 +1,46 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
+import axios from 'axios';
+import { useDispatch, useSelector } from 'react-redux';
 import { convertToBase64 } from '../utils/convertToBase64';
+import { useCookies } from 'react-cookie';
+import {
+	updateUserStart,
+	updateUserSuccess,
+	updateUserFailure,
+} from '../redux/user/userSlice';
 
 export default function Profile() {
-	const { currentUser, isLoading } = useSelector((state) => state.user);
+	const [cookies] = useCookies('access_token');
 	const fileRef = useRef();
+	const dispatch = useDispatch();
+	const { currentUser, isLoading, error } = useSelector((state) => state.user);
 	const [file, setFile] = useState(currentUser.avatar);
 	const [formData, setFormData] = useState({});
+	const [updateSuccess, setUpdateSuccess] = useState(false);
 
-	const submitHandler = () => {};
+	const submitHandler = async (e) => {
+		e.preventDefault();
+		try {
+			dispatch(updateUserStart());
+			const { data } = await axios.post(
+				`http://localhost:4000/api/user/update/${currentUser._id}`,
+				formData,
+				{
+					headers: {
+						authorization: cookies.access_token,
+					},
+				}
+			);
+			dispatch(updateUserSuccess(data));
+			setUpdateSuccess(true);
+		} catch (error) {
+			dispatch(updateUserFailure());
+		}
+	};
 
-	const changeHandler = (e) => {};
+	const changeHandler = (e) => {
+		setFormData({ ...formData, [e.target.id]: e.target.value });
+	};
 
 	const fileUpload = async (file) => {
 		const base64 = await convertToBase64(file);
@@ -36,7 +66,8 @@ export default function Profile() {
 				/>
 				<input
 					type="text"
-					placeholder="username"
+					placeholder="userName"
+					defaultValue={currentUser.userName}
 					className="border p-3 rounded-lg"
 					id="userName"
 					onChange={changeHandler}
@@ -44,6 +75,7 @@ export default function Profile() {
 				<input
 					type="text"
 					placeholder="email"
+					defaultValue={currentUser.email}
 					className="border p-3 rounded-lg"
 					id="email"
 					onChange={changeHandler}
@@ -66,6 +98,10 @@ export default function Profile() {
 				<span className="text-red-700 cursor-pointer">Delete Account</span>
 				<span className="text-red-700 cursor-pointer">Sign Out</span>
 			</div>
+			<p className="mt-5 text-red-700">{error ? error : ''}</p>
+			<p className="mt-5 text-green-500">
+				{updateSuccess ? 'Profile updated successfully' : ''}
+			</p>
 		</div>
 	);
 }
