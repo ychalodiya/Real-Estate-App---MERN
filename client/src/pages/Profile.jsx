@@ -11,6 +11,7 @@ import {
 	deleteUserStart,
 	deleteUserSuccess,
 	deleteUserFailure,
+	signOut,
 } from '../redux/user/userSlice';
 
 export default function Profile() {
@@ -55,6 +56,16 @@ export default function Profile() {
 				}
 			);
 			dispatch(deleteUserSuccess());
+			setCookies('access_token', '');
+			navigate('/signin');
+		} catch (error) {
+			dispatch(deleteUserFailure(error.message));
+		}
+	};
+
+	const signoutHandler = () => {
+		try {
+			dispatch(signOut());
 			setCookies('access_token', '');
 			navigate('/signin');
 		} catch (error) {
@@ -122,7 +133,9 @@ export default function Profile() {
 				<span className="text-red-700 cursor-pointer" onClick={deleteHandler}>
 					Delete Account
 				</span>
-				<span className="text-red-700 cursor-pointer">Sign Out</span>
+				<span className="text-red-700 cursor-pointer" onClick={signoutHandler}>
+					Sign Out
+				</span>
 			</div>
 			<p className="mt-5 text-red-700">{error ? error : ''}</p>
 			<p className="mt-5 text-green-500">
