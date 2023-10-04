@@ -3,16 +3,21 @@ import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { convertToBase64 } from '../utils/convertToBase64';
 import { useCookies } from 'react-cookie';
+import { useNavigate } from 'react-router-dom';
 import {
 	updateUserStart,
 	updateUserSuccess,
 	updateUserFailure,
+	deleteUserStart,
+	deleteUserSuccess,
+	deleteUserFailure,
 } from '../redux/user/userSlice';
 
 export default function Profile() {
-	const [cookies] = useCookies('access_token');
+	const [cookies, setCookies] = useCookies('access_token');
 	const fileRef = useRef();
 	const dispatch = useDispatch();
+	const navigate = useNavigate();
 	const { currentUser, isLoading, error } = useSelector((state) => state.user);
 	const [file, setFile] = useState(currentUser.avatar);
 	const [formData, setFormData] = useState({});
@@ -34,7 +39,26 @@ export default function Profile() {
 			dispatch(updateUserSuccess(data));
 			setUpdateSuccess(true);
 		} catch (error) {
-			dispatch(updateUserFailure());
+			dispatch(updateUserFailure(error.message));
+		}
+	};
+
+	const deleteHandler = async () => {
+		try {
+			dispatch(deleteUserStart());
+			const { data } = await axios.delete(
+				`http://localhost:4000/api/user/delete/${currentUser._id}`,
+				{
+					headers: {
+						authorization: cookies.access_token,
+					},
+				}
+			);
+			dispatch(deleteUserSuccess());
+			setCookies('access_token', '');
+			navigate('/signin');
+		} catch (error) {
+			dispatch(deleteUserFailure(error.message));
 		}
 	};
 
@@ -95,7 +119,9 @@ export default function Profile() {
 				</button>
 			</form>
 			<div className="flex justify-between mt-5">
-				<span className="text-red-700 cursor-pointer">Delete Account</span>
+				<span className="text-red-700 cursor-pointer" onClick={deleteHandler}>
+					Delete Account
+				</span>
 				<span className="text-red-700 cursor-pointer">Sign Out</span>
 			</div>
 			<p className="mt-5 text-red-700">{error ? error : ''}</p>

@@ -25,7 +25,6 @@ export const signup = async (req, res, next) => {
 
 export const google = async (req, res, next) => {
 	const { name, email, photo } = req.body;
-	console.log(req.body);
 	try {
 		const validUser = await userModel.findOne({ email });
 		if (validUser) {
