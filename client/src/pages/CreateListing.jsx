@@ -1,6 +1,45 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { convertToBase64 } from '../utils/convertToBase64';
 
 export default function CreateListing() {
+	const [files, setFiles] = useState([]);
+	const [loading, setLoading] = useState(false);
+	const [formData, setFormData] = useState({ images: [] });
+	const [imageUploadError, setImageUploadError] = useState(false);
+
+	const handleImagesUpload = async () => {
+		setLoading(true);
+		if (
+			formData.images.length + files.length <= 6 &&
+			formData.images.length + files.length > 0
+		) {
+			const images = [];
+			for (let i = 0; i < files.length; i++) {
+				images.push(await storeImage(files[i]));
+			}
+
+			setFormData({ ...formData, images: formData.images.concat(images) });
+			document.getElementById('images').value = '';
+		} else {
+			document.getElementById('images').value = '';
+			setImageUploadError('You can only upload 6 images per listing');
+		}
+
+		setLoading(false);
+	};
+
+	const storeImage = async (file) => {
+		const blobImg = await convertToBase64(file);
+		return blobImg;
+	};
+
+	const deleteImageHandler = (index) => {
+		setFormData({
+			...formData,
+			images: formData.images.filter((_, i) => i !== index),
+		});
+	};
+
 	const changeHandler = () => {};
 
 	return (
@@ -109,20 +148,43 @@ export default function CreateListing() {
 				</div>
 				<div className="flex flex-col gap-4 flex-1">
 					<p>
-						<b>Images: </b>The first image will be the cover (max-6)
+						<b>Images: </b>The first image will be the cover (max 6)
 					</p>
 					<div className="flex gap-3">
 						<input
+							onChange={(e) => setFiles(e.target.files)}
 							className="p-3 border border-gray-300 rounded w-full"
 							type="file"
 							id="images"
 							accept="image/*"
 							multiple
 						/>
-						<button className="p-3 text-green-500 border-green-500 border rounded uppercase hover:shadow-lg disabled:opacity-80">
-							Upload
+						<button
+							type="button"
+							onClick={handleImagesUpload}
+							className="p-3 text-green-500 border-green-500 border rounded uppercase hover:shadow-lg disabled:opacity-80"
+						>
+							{loading ? 'Uploading...' : 'Upload'}
 						</button>
 					</div>
+					<p className="text-red-500">{imageUploadError && imageUploadError}</p>
+					{formData.images.length > 0 &&
+						formData.images.map((image, index) => (
+							<div className="flex justify-between p-3 border items-center">
+								<img
+									className="w-20 h-20 object-cover rounded-lg"
+									src={image}
+									alt={`Listing Image ${index + 1}`}
+								/>
+								<button
+									onClick={() => deleteImageHandler(index)}
+									className="border border-red-500 text-red-500 rounded px-5 hover:opacity-70"
+								>
+									Delete
+								</button>
+							</div>
+						))}
+
 					<button className="uppercase p-3 bg-slate-700 text-white rounded-lg hover:opacity-95 disabled:opacity-80">
 						Create Listing
 					</button>
