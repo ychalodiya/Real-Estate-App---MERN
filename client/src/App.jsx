@@ -8,6 +8,7 @@ import Signup from './pages/Signup';
 import Header from './components/Header';
 import { useCookies } from 'react-cookie';
 import PrivateRoute from './components/PrivateRoute';
+import CreateListing from './pages/CreateListing';
 
 export default function App() {
 	const [cookies] = useCookies('access_token');
@@ -28,6 +29,7 @@ export default function App() {
 				<Route path="/about" element={<About />} />
 				<Route element={<PrivateRoute />}>
 					<Route path="/profile" element={<Profile />} />
+					<Route path="/create-listing" element={<CreateListing />} />
 				</Route>
 			</Routes>
 		</BrowserRouter>

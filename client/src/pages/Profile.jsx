@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { convertToBase64 } from '../utils/convertToBase64';
 import { useCookies } from 'react-cookie';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
 	updateUserStart,
 	updateUserSuccess,
@@ -82,10 +82,11 @@ export default function Profile() {
 		setFile(base64);
 		setFormData({ ...formData, avatar: base64 });
 	};
+
 	return (
 		<div className="p-3 max-w-lg mx-auto">
 			<h1 className="text-3xl text-center font-semibold my-7">Profile</h1>
-			<form className="flex flex-col gap-4" onSubmit={submitHandler}>
+			<form className="flex flex-col gap-4 my-2" onSubmit={submitHandler}>
 				<input
 					onChange={(e) => fileUpload(e.target.files[0])}
 					type="file"
@@ -128,6 +129,12 @@ export default function Profile() {
 				>
 					{isLoading ? 'Loading...' : 'Update'}
 				</button>
+				<Link
+					className="bg-green-500 p-3 text-center uppercase rounded-lg hover:opacity-95"
+					to="/create-listing"
+				>
+					Create Listing
+				</Link>
 			</form>
 			<div className="flex justify-between mt-5">
 				<span className="text-red-700 cursor-pointer" onClick={deleteHandler}>
