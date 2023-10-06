@@ -130,7 +130,7 @@ export default function Profile() {
 					{isLoading ? 'Loading...' : 'Update'}
 				</button>
 				<Link
-					className="bg-green-500 p-3 text-center uppercase rounded-lg hover:opacity-95"
+					className="bg-green-700 p-3 text-white text-center uppercase rounded-lg hover:opacity-95"
 					to="/create-listing"
 				>
 					Create Listing

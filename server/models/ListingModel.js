@@ -22,11 +22,15 @@ const listingSchema = new mongoose.Schema(
 			type: Number,
 			required: true,
 		},
-		address: {
+		type: {
 			type: String,
 			required: true,
 		},
 		bathrooms: {
+			type: Number,
+			required: true,
+		},
+		bedrooms: {
 			type: Number,
 			required: true,
 		},
@@ -38,21 +42,12 @@ const listingSchema = new mongoose.Schema(
 			type: Boolean,
 			required: true,
 		},
-		type: {
-			type: Number,
-			required: true,
-		},
-		bathrooms: {
-			type: String,
-			required: true,
-		},
 		offer: {
 			type: Boolean,
 			required: true,
 		},
 		images: {
 			type: Array,
-			required: true,
 		},
 		userRef: {
 			type: String,
