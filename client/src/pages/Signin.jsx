@@ -17,14 +17,13 @@ export default function Signin() {
 	const [, setCookies] = useCookies('access_token');
 	const [formData, setFormData] = useState({});
 	const { error, isLoading } = useSelector((state) => state.user);
-
 	const changeHandler = (e) => {
 		setFormData({ ...formData, [e.target.id]: e.target.value });
 	};
 
 	const submitHandler = async (e) => {
+		e.preventDefault();
 		try {
-			e.preventDefault();
 			dispatch(signInStart());
 			const { data } = await axios.post(
 				'http://localhost:4000/api/auth/signin',

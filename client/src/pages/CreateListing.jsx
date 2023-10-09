@@ -78,8 +78,8 @@ export default function CreateListing() {
 	const submitHandler = async (e) => {
 		e.preventDefault();
 		try {
-			// if (formData.images.length < 1)
-			// 	return setError('You must upload at least one image');
+			if (formData.images.length < 1)
+				return setError('You must upload at least one image');
 			if (formData.regularPrice < formData.discountPrice)
 				return setError('Discount price must be lower than regular price');
 			setLoading(true);
@@ -95,8 +95,7 @@ export default function CreateListing() {
 				}
 			);
 			setLoading(false);
-			console.log(data);
-			navigate(`/listing/${data._id}`);
+			navigate(`/listings/${data._id}`);
 		} catch (error) {
 			setError(error.message);
 			setLoading(false);

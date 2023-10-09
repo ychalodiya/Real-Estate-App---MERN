@@ -15,14 +15,18 @@ import {
 } from '../redux/user/userSlice';
 
 export default function Profile() {
-	const [cookies, setCookies] = useCookies('access_token');
 	const fileRef = useRef();
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
+
+	const [cookies, setCookies] = useCookies('access_token');
 	const { currentUser, isLoading, error } = useSelector((state) => state.user);
+
 	const [file, setFile] = useState(currentUser.avatar);
 	const [formData, setFormData] = useState({});
 	const [updateSuccess, setUpdateSuccess] = useState(false);
+	const [showListingsError, setShowListingsError] = useState(false);
+	const [listings, setListings] = useState([]);
 
 	const submitHandler = async (e) => {
 		e.preventDefault();
@@ -63,6 +67,24 @@ export default function Profile() {
 		}
 	};
 
+	const showListingsHandler = async () => {
+		try {
+			const { data } = await axios.get(
+				`http://localhost:4000/api/user/listings/${currentUser._id}`,
+				{
+					headers: {
+						authorization: cookies.access_token,
+					},
+				}
+			);
+			setShowListingsError(false);
+			console.log(data);
+			setListings(data);
+		} catch (error) {
+			setShowListingsError(true);
+		}
+	};
+
 	const signoutHandler = () => {
 		try {
 			dispatch(signOut());
@@ -81,6 +103,23 @@ export default function Profile() {
 		const base64 = await convertToBase64(file);
 		setFile(base64);
 		setFormData({ ...formData, avatar: base64 });
+	};
+
+	const deleteListingHandler = async (listingId) => {
+		try {
+			const { data } = await axios.delete(
+				`http://localhost:4000/api/listing/delete/${listingId}`,
+				{
+					headers: {
+						authorization: cookies.access_token,
+					},
+				}
+			);
+			console.log(data);
+			setListings((prev) => prev.filter((listing) => listing.id !== listingId));
+		} catch (error) {
+			console.log(error.message);
+		}
 	};
 
 	return (
@@ -148,6 +187,48 @@ export default function Profile() {
 			<p className="mt-5 text-green-500">
 				{updateSuccess ? 'Profile updated successfully' : ''}
 			</p>
+			<button className="text-green-600 w-full" onClick={showListingsHandler}>
+				Show Listings
+			</button>
+			<p className="mt-5 text-red-700">
+				{showListingsError ? 'Error showing listings' : ''}
+			</p>
+			{listings && listings.length > 0 && (
+				<div className="flex flex-col gap-4">
+					<h1 className="w-full text-center font-semibold text-2xl">
+						Your Listings
+					</h1>
+					{listings.map((listing) => (
+						<div
+							className="border rounded-lg p-3 gap-4 flex justify-between items-center"
+							key={listing._id}
+						>
+							<Link to={`/listing/${listing._id}`}>
+								<img
+									src={listing.images[0]}
+									alt={listing.name}
+									className="h-16 w-16 object-contain"
+								/>
+							</Link>
+							<Link
+								className="flex-1 text-slate-700 font-semibold hover:underline truncate"
+								to={`/listing/${listing._id}`}
+							>
+								<p>{listing.name}</p>
+							</Link>
+							<div className="flex flex-col items-center">
+								<button
+									className="text-red-700 uppercase"
+									onClick={() => deleteListingHandler(listing._id)}
+								>
+									Delete
+								</button>
+								<button className="text-green-700 uppercase">Edit</button>
+							</div>
+						</div>
+					))}
+				</div>
+			)}
 		</div>
 	);
 }
