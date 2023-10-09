@@ -106,6 +106,7 @@ export default function Profile() {
 	};
 
 	const deleteListingHandler = async (listingId) => {
+		console.log(listingId);
 		try {
 			const { data } = await axios.delete(
 				`http://localhost:4000/api/listing/delete/${listingId}`,
@@ -115,8 +116,10 @@ export default function Profile() {
 					},
 				}
 			);
-			console.log(data);
-			setListings((prev) => prev.filter((listing) => listing.id !== listingId));
+
+			setListings((prev) =>
+				prev.filter((listing) => listing._id !== listingId)
+			);
 		} catch (error) {
 			console.log(error.message);
 		}
@@ -223,7 +226,9 @@ export default function Profile() {
 								>
 									Delete
 								</button>
-								<button className="text-green-700 uppercase">Edit</button>
+								<Link to={`/edit-listing/${listing._id}`}>
+									<button className="text-green-700 uppercase">Edit</button>
+								</Link>
 							</div>
 						</div>
 					))}
