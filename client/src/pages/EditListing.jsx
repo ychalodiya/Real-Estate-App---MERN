@@ -31,12 +31,13 @@ export default function EditListing() {
 		images: [],
 		userRef: currentUser._id,
 	});
+	console.log(formData);
 
 	const fetchListing = async () => {
 		const { data } = await axios.get(
 			`http://localhost:4000/api/listing/get/${listingId}`
 		);
-		setFormData({ ...formData, data });
+		setFormData({ ...formData, ...data });
 	};
 	useEffect(() => {
 		fetchListing();

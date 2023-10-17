@@ -10,6 +10,7 @@ import { useCookies } from 'react-cookie';
 import PrivateRoute from './components/PrivateRoute';
 import CreateListing from './pages/CreateListing';
 import EditListing from './pages/EditListing';
+import Listing from './pages/Listing';
 
 export default function App() {
 	const [cookies] = useCookies('access_token');
@@ -28,6 +29,7 @@ export default function App() {
 				<Route path="/signin" element={<Signin />} />
 				<Route path="/signup" element={<Signup />} />
 				<Route path="/about" element={<About />} />
+				<Route path="/listings/:listingId" element={<Listing />} />
 				<Route element={<PrivateRoute />}>
 					<Route path="/profile" element={<Profile />} />
 					<Route path="/create-listing" element={<CreateListing />} />
