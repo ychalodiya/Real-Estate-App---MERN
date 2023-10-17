@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt';
 import userModel from '../models/UserModel.js';
 import listingModel from '../models/ListingModel.js';
+
 export const test = (req, res) => {
 	res.json({ message: 'This is a simple test api route' });
 };
@@ -48,7 +49,6 @@ export const deleteUser = async (req, res, next) => {
 
 export const getListings = async (req, res, next) => {
 	if (req.params.id === req.user.id) {
-		console.log('match');
 		try {
 			const listings = await listingModel.find({ userRef: req.params.id });
 			res.status(200).json(listings);
@@ -57,5 +57,18 @@ export const getListings = async (req, res, next) => {
 		}
 	} else {
 		return next(errorHandler(401, 'You can only view your own listings'));
+	}
+};
+
+export const getUser = async (req, res, next) => {
+	try {
+		const user = await userModel.findById(req.params.id);
+		if (!user) {
+			return next(errorHandler(404, 'User not found'));
+		}
+		const { password: pass, ...rest } = user._doc;
+		res.status(200).json(rest);
+	} catch (error) {
+		next(error);
 	}
 };

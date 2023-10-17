@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -14,14 +15,17 @@ import {
 	FaShare,
 } from 'react-icons/fa';
 import 'swiper/css/bundle';
+import Contact from '../components/Contact';
 
 export default function Listing() {
 	SwiperCore.use([Navigation]);
+	const { currentUser } = useSelector((state) => state.user);
 	const { listingId } = useParams();
 	const [listing, setListing] = useState(null);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState(false);
 	const [copied, setCopied] = useState(false);
+	const [contact, setContact] = useState(false);
 
 	const fetchListing = async () => {
 		try {
@@ -34,8 +38,6 @@ export default function Listing() {
 				setError(true);
 				return;
 			}
-			console.log(data);
-
 			setListing(data);
 			setError(false);
 		} catch (error) {
@@ -69,7 +71,7 @@ export default function Listing() {
 							</SwiperSlide>
 						))}
 					</Swiper>
-					<div className="fixed top-[13%] right-[3%] z-10 border rounded-full w-12 h-12 flex justify-center items-center bg-slate-100 cursor-pointer">
+					<div className="fixed top-[20%] right-[3%] z-10 border rounded-full w-12 h-12 flex justify-center items-center bg-slate-100 cursor-pointer">
 						<FaShare
 							className="text-slate-500"
 							onClick={() => {
@@ -135,6 +137,15 @@ export default function Listing() {
 							<span className="font-semibold text-black">Description - </span>
 							{listing.description}
 						</p>
+						{currentUser && listing.userRef !== currentUser._id && !contact && (
+							<button
+								className="bg-slate-700 text-white rounded-lg uppercase hover:opacity-95"
+								onClick={() => setContact(true)}
+							>
+								Contact Landlord
+							</button>
+						)}
+						{contact && <Contact listing={listing} />}
 					</div>
 				</div>
 			)}
