@@ -7,6 +7,7 @@ export default function Search() {
 	const navigate = useNavigate();
 	const [loading, setLoading] = useState(false);
 	const [listings, setListings] = useState([]);
+	const [showMore, setShowMore] = useState(false);
 
 	const [sidebarData, setSidebarData] = useState({
 		searchTerm: '',
@@ -59,13 +60,35 @@ export default function Search() {
 		navigate(`/search?${searchQuery}`);
 	};
 
+	const showMoreClick = async () => {
+		const numberOfListing = listings.length;
+
+		const startIndex = numberOfListing;
+		const urlParams = new URLSearchParams(location.search);
+		urlParams.set('startIndex', startIndex);
+		const searchQuery = urlParams.toString();
+		const { data } = await axios.get(
+			`http://localhost:4000/api/listing/get?${searchQuery}`
+		);
+		if (data.length < 9) {
+			setShowMore(false);
+		}
+		setListings([...listings, ...data]);
+	};
+
 	const fetchListings = async () => {
 		setLoading(true);
+		setShowMore(false);
 		const urlParams = new URLSearchParams(location.search);
 		const searchQuery = urlParams.toString();
 		const { data } = await axios.get(
 			`http://localhost:4000/api/listing/get?${searchQuery}`
 		);
+		if (data.length > 8) {
+			setShowMore(true);
+		} else {
+			setShowMore(false);
+		}
 		setLoading(false);
 		setListings(data);
 	};
@@ -217,6 +240,14 @@ export default function Search() {
 						listings.map((listing) => (
 							<ListingItem key={listing._id} listing={listing} />
 						))}
+					{showMore && (
+						<button
+							onClick={showMoreClick}
+							className="text-green-700 hover:underline p-7 text-center w-full"
+						>
+							Show More
+						</button>
+					)}
 				</div>
 			</div>
 		</div>
