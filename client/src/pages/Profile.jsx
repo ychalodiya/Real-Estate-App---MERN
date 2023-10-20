@@ -78,7 +78,6 @@ export default function Profile() {
 				}
 			);
 			setShowListingsError(false);
-			console.log(data);
 			setListings(data);
 		} catch (error) {
 			setShowListingsError(true);
